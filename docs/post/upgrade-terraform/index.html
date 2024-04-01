@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+		
+		
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>Streamlining Your Infrastructure: A Guide to Upgrading Terraform state files from Version 0.12.31 to 1.3.6 &middot; Blog Posts By Satish Tripathi</title>
+
+		
+		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/css/fonts.css">
+		
+		<link rel="icon" href="/favicon.ico"/>
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="Blog Posts By Satish Tripathi" />
+
+		<script src="/js/darkmode.js"></script>
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					
+						<h2 class="nav-title">Blog Posts By Satish Tripathi</h2>
+					
+				</a>
+				<ul>
+    
+    
+</ul>
+			</div>
+		</nav>
+
+        <div id="darkModeToggle" onclick="toggleDarkMode()">
+  &#9680; 
+</div>
+
+        
+
+<main>
+	
+
+
+        <div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        Satish tripathi
+        <br>
+        <span>on&nbsp;</span><time datetime="2024-03-28 00:00:00 &#43;0000 UTC">March 28, 2024</time>
+</div>
+
+		<h1 class="post-title">Streamlining Your Infrastructure: A Guide to Upgrading Terraform state files from Version 0.12.31 to 1.3.6</h1>
+<div class="post-line"></div>
+
+		
+
+		<p><strong>Why This Blog?</strong>
+The frustration of not finding a proper guide on the internet prompted the creation of this blog. Countless hours were spent researching, experimenting, and compiling the most effective and efficient upgrade process. We understand the importance of a smooth transition, and we&rsquo;ve taken great care to ensure that every step is explained in a way that is easy to understand and follow.</p>
+<p><strong>Why it&rsquo;s Important to Upgrade the Terraform version:</strong></p>
+<ul>
+<li>I will mention a few of the points here:</li>
+<li>New Features and Enhancements.</li>
+<li>Bug Fixes and Security Updates</li>
+<li>Compatibility with new Provider Versions</li>
+<li>Community Support and Documentation</li>
+<li>LTS support.</li>
+<li>Have you ever noticed that when you run terraform plan, Do your AWS resources get tagged even if those tags are already present? This behavior can occur due to the AWS provider version. To ensure compatibility with the latest provider version, it is important to upgrade your Terraform version.</li>
+</ul>
+<p><strong>Steps to Upgrade the Terraform Version:</strong>
+<em>What assumptions are?</em>
+State files are parked in S3 or any other storage, but in this blog, I assume that the state file is in the S3 bucket.
+You have a backend file in the Terraform working directory.
+You have <code>**/*.terraform.tfstate* </code>in your .gitignore file.
+<em>Get the state from the Remote Storage:</em>
+The backend file looks something like the below:</p>
+<p><img src="/image.png" alt="Backend-file"></p>
+<p>Login into AWS Account where the resources live using the access key and secret key on the CLI. Keep in mind that Terraform 0.12.31 doesn&rsquo;t support the AWS SSO login method.
+<em>Switch the terraform version to 0.12.31:</em>
+I use tfenv to manage the terraform versions:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span>  <span style="color:#a6e22e">tfenv</span> <span style="color:#a6e22e">use</span> <span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">12</span>.<span style="color:#ae81ff">31</span>
+</span></span></code></pre></div><p>Run the below command to Initializatize terraform:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span>  <span style="color:#a6e22e">terraform</span> <span style="color:#a6e22e">init</span>
+</span></span></code></pre></div><p>Once Initialization is completed, remove the backend file.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>  rm backend.tf
+</span></span></code></pre></div><p>Now move the state locally by running the below command:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#a6e22e">terraform</span> <span style="color:#a6e22e">init</span>
+</span></span></code></pre></div><p>The output will be something like the below:
+<img src="/image-1.png" alt="Alt text"></p>
+<p>Type yes to move the state locally. Now you should have a file name terraform.tfstate in your Terraform project directory.</p>
+<p>Create a directory to backup the state file during the upgrade process.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>  mkdir .backup
+</span></span><span style="display:flex;"><span>  cp terraform.tfstate .backup/terraform.tfstate.0.12.31
+</span></span><span style="display:flex;"><span>  git add -A .
+</span></span><span style="display:flex;"><span>  git commit -am <span style="color:#e6db74">&#34;0.12.31 checkpoint&#34;</span>
+</span></span></code></pre></div><p><em>Upgrade to 0.13.7</em>
+Change the <code>required_version</code> in provider.tf or any other file like backend.tf
+In our infrastructure, we keep the terraform version in provider.tf file.
+Switch the terraform version to 0.13.7 by running the below command:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span>  <span style="color:#a6e22e">tfenv</span> <span style="color:#a6e22e">use</span> <span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">13</span>.<span style="color:#ae81ff">7</span>
+</span></span></code></pre></div><p>Run the below command to perform the 0.13.7 upgrade:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>find . -type f -not -path <span style="color:#e6db74">&#39;./.terraform/*&#39;</span> -not -path <span style="color:#e6db74">&#39;./.git/*&#39;</span> -name <span style="color:#e6db74">&#39;*.tf&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  | xargs -n1 dirname | uniq | xargs -n1 terraform 0.13upgrade -yes
+</span></span></code></pre></div><p>the above command is provided by hashicorop.
+<em>Upgrade the state by running the below command:</em></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>  rm -rf .terraform*
+</span></span><span style="display:flex;"><span>  terraform init
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># this should have no changes</span>
+</span></span><span style="display:flex;"><span>  terraform apply
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># the apply should not ask for confirmation and have 0 resource changes</span>
+</span></span><span style="display:flex;"><span>  head terraform.tfstate
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># should look something along the lines of the following</span>
+</span></span></code></pre></div><p><img src="/image-2.png" alt="Alt text"></p>
+<p><em>Backup the state &amp; Clear git tree:</em></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>  cp terraform.tfstate .backup/terraform.tfstate.0.13.7
+</span></span><span style="display:flex;"><span>  git commit -am <span style="color:#e6db74">&#34;0.13.7 checkpoint&#34;</span>
+</span></span></code></pre></div><p><em>Upgrade to 0.14.11</em>
+Switch to 0.14.11</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span>  <span style="color:#a6e22e">tfenv</span> <span style="color:#a6e22e">use</span> <span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">14</span>.<span style="color:#ae81ff">11</span>
+</span></span></code></pre></div><p>Change the required_version to 0.14.11</p>
+<p><img src="/image-3.png" alt="New-3"></p>
+<p>Run the below command:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>  rm -rf .terraform*
+</span></span><span style="display:flex;"><span>  terraform init
+</span></span><span style="display:flex;"><span>  terraform plan
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># this should have no changes, if it does, proceed to fix the issues and re-run the commands in the block above.</span>
+</span></span></code></pre></div><p><em>The plan should have no changes. Then only processed to run an apply.</em></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span>  <span style="color:#a6e22e">terraform</span> <span style="color:#a6e22e">apply</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">  # the apply should not ask for confirmation and have 0 resource changes
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">head</span> <span style="color:#a6e22e">terraform</span>.<span style="color:#a6e22e">tfstate</span>
+</span></span></code></pre></div><h1 id="should-look-something-along-the-lines-of-the-following">should look something along the lines of the following</h1>
+<p><img src="/image-4.png" alt="Alt text"></p>
+<p><em>Upgrade to 1.3.6:</em>
+change the required_version in the provider.tf or backend.tf file.
+Switch to 1.3.6:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span>  <span style="color:#a6e22e">tfenv</span> <span style="color:#a6e22e">use</span> <span style="color:#ae81ff">1</span>.<span style="color:#ae81ff">3</span>.<span style="color:#ae81ff">6</span>
+</span></span></code></pre></div><p>Now upgrade the state:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>  rm -rf .terraform*
+</span></span><span style="display:flex;"><span>  terraform init
+</span></span><span style="display:flex;"><span>  terraform plan
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># this should have no changes</span>
+</span></span><span style="display:flex;"><span>  terraform apply
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># the apply should not ask for confirmation and have 0 resource changes</span>
+</span></span><span style="display:flex;"><span>  head terraform.tfstate
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># should look something along the lines of the following</span>
+</span></span></code></pre></div><p><img src="/image-5.png" alt="Alt text"></p>
+<p><em>Backup the state &amp; Clear git tree:</em></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>  cp terraform.tfstate .backup/terraform.tfstate.1.3.6
+</span></span><span style="display:flex;"><span>  git commit -am <span style="color:#e6db74">&#34;1.3.6 checkpoint&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># re-create the state backend.tf file and run the below command:</span>
+</span></span><span style="display:flex;"><span>  terraform init
+</span></span><span style="display:flex;"><span>  type yes to move the state remote storage.
+</span></span></code></pre></div><p><img src="/image-6.png" alt="Alt text"></p>
+<p>Congratulations! You have successfully upgraded your state file.</p>
+<p>Note: It is important to exercise caution when handling your state file and avoid pushing it to public repositories like GitHub. Your state file may contain sensitive and confidential information, such as resource IDs, credentials, and other details that could potentially compromise the security of your infrastructure.
+Acknowledgments: Phil&rsquo;s expertise and deep understanding of Terraform allowed us to craft a reliable and detailed resource for upgrading Terraform from version 0.12.31 to 1.3.6. His patient guidance and meticulous attention to detail ensured the accuracy and clarity of the steps outlined in this guide.</p>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/post/spacelift-graphql/" class="left arrow">&#8592;</a>
+		<a href="/post/test-blog/" class="right arrow">&#8594;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			
+			<span>
+			&copy; <time datetime="2024-04-01 17:00:06.056552 &#43;0530 IST m=&#43;0.362116376">2024</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>
