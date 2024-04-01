@@ -1,5 +1,11 @@
 # ***blog***
 
+Adding a theme:
+
+```bash
+git submodule add https://github.com/EmielH/tale-hugo.git themes/tale
+```
+
 **Run below command to add a new post:**
 
 ```bash
