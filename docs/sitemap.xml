@@ -2,23 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/</loc>
+    <loc>https://infinitepi-io.github.io/</loc>
     <lastmod>2024-03-28T23:57:47+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:1313/post/lambda-function-url/</loc>
+    <loc>https://infinitepi-io.github.io/post/lambda-function-url/</loc>
     <lastmod>2024-03-28T23:57:47+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:1313/post/</loc>
+    <loc>https://infinitepi-io.github.io/post/</loc>
     <lastmod>2024-03-28T23:57:47+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:1313/post/upgrade-terraform/</loc>
+    <loc>https://infinitepi-io.github.io/post/upgrade-terraform/</loc>
     <lastmod>2024-03-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/post/spacelift-graphql/</loc>
+    <loc>https://infinitepi-io.github.io/post/spacelift-graphql/</loc>
     <lastmod>2024-03-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>https://infinitepi-io.github.io/categories/</loc>
   </url><url>
-    <loc>http://localhost:1313/tags/</loc>
+    <loc>https://infinitepi-io.github.io/tags/</loc>
   </url>
 </urlset>
