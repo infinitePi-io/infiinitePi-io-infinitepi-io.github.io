@@ -18,6 +18,8 @@ git submodule add https://github.com/EmielH/tale-hugo.git themes/tale
   hugo -t tale
 ```
 
+**Note: don't run it locally it will chnage the referance to localhost.** 
+
 ```bash
 git clone https://github.com/EmielH/tale-hugo.git
   500  git clone https://github.com/EmielH/tale-hugo.git themes/tale
