@@ -1,5 +1,5 @@
 baseURL = 'https://infinitepi-io.github.io/'
-languageCode = 'en'
+languageCode = 'en-us'
 title = 'Blog Posts By Satish Tripathi'
 staticDir= ['static']
 theme= 'tale'
