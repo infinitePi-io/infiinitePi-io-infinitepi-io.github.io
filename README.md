@@ -9,7 +9,7 @@ git submodule add https://github.com/EmielH/tale-hugo.git themes/tale
 **Run below command to add a new post:**
 
 ```bash
-  hugo new posts/${post-name}.md
+  hugo new post/${post-name}.md
 ```
 
 **Run below command to generate the public folder to push it to the**
@@ -18,7 +18,7 @@ git submodule add https://github.com/EmielH/tale-hugo.git themes/tale
   hugo -t tale
 ```
 
-**Note: don't run it locally it will chnage the referance to localhost.** 
+**Note: don't run it locally it will chnage the referance to localhost.**
 
 ```bash
 git clone https://github.com/EmielH/tale-hugo.git
