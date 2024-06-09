@@ -6,8 +6,15 @@
     <description>Recent content on Blog Posts By Satish Tripathi</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 28 Mar 2024 23:57:47 +0530</lastBuildDate>
+    <lastBuildDate>Sun, 09 Jun 2024 12:44:07 +0530</lastBuildDate>
     <atom:link href="https://infinitepi-io.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Aws Graphql Api</title>
+      <link>https://infinitepi-io.github.io/post/aws-graphql-api/</link>
+      <pubDate>Sun, 09 Jun 2024 12:44:07 +0530</pubDate>
+      <guid>https://infinitepi-io.github.io/post/aws-graphql-api/</guid>
+      <description>Query Examples will be added Soon!</description>
+    </item>
     <item>
       <title>Lambda Function Url</title>
       <link>https://infinitepi-io.github.io/post/lambda-function-url/</link>
